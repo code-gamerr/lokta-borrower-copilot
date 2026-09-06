@@ -12,8 +12,9 @@ import {
 import type { Question } from './engine'
 import { assessRemote, chatRemote, explainRemote, healthRemote } from './api/client'
 import type { RiskResult } from './api/types'
+import { GetStarted, Landing } from './components/ui/borrower-flow/Landing'
 
-type Phase = 'home' | 'quiz' | 'results'
+type Phase = 'landing' | 'start' | 'quiz' | 'results'
 type AssessView = 'idle' | 'loading' | 'retry' | 'error' | 'success'
 
 const verdictLabel = {
@@ -36,7 +37,7 @@ function aiSourceLabel(source: string | null): string | null {
 }
 
 export default function App() {
-  const [phase, setPhase] = useState<Phase>('home')
+  const [phase, setPhase] = useState<Phase>('landing')
   const [answers, setAnswers] = useState<Answers>({})
   const [assessment, setAssessment] = useState<Assessment | null>(null)
   const [ml, setMl] = useState<RiskResult | null>(null)
@@ -48,7 +49,6 @@ export default function App() {
   const [apiOk, setApiOk] = useState<boolean | null>(null)
   const [llmOn, setLlmOn] = useState(false)
   const retryRef = useRef<HTMLButtonElement>(null)
-  const statusRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     healthRemote()
@@ -81,9 +81,7 @@ export default function App() {
           setNarrative(e.narrative)
           setNarrativeSource(e.source)
         })
-        .catch(() => {
-          /* non-blocking */
-        })
+        .catch(() => {})
     } catch (e) {
       setError(e instanceof Error ? e.message : 'Assessment failed — is the API running?')
       setView('error')
@@ -99,32 +97,47 @@ export default function App() {
   }
 
   const busy = view === 'loading' || view === 'retry'
+  const showChrome = phase !== 'landing'
 
   return (
-    <div className="shell">
+    <div className={`shell ${phase === 'landing' ? 'shell-landing' : ''}`}>
       <a className="skip-link" href="#main">
         Skip to content
       </a>
-      <header className="chrome no-print">
-        <div className="chrome-brand">
-          <div className="mark" aria-hidden />
-          <div>
-            <p className="product">Borrower Copilot</p>
-            <p className="sub">Policy engine · ML risk · AI brief</p>
-          </div>
-        </div>
-        <div className="chrome-status" aria-label="System status">
-          <span className={`pill ${apiOk ? 'ok' : apiOk === false ? 'bad' : ''}`}>
-            API {apiOk === null ? '…' : apiOk ? 'online' : 'offline'}
-          </span>
-          <span className={`pill ${llmOn ? 'ok' : ''}`}>
-            OpenRouter {llmOn ? 'on' : 'fallback'}
-          </span>
-        </div>
-      </header>
 
-      <main id="main" className="main" aria-busy={busy}>
-        <div ref={statusRef} className="sr-only" aria-live="polite" aria-atomic="true">
+      {showChrome ? (
+        <header className="chrome no-print">
+          <button
+            type="button"
+            className="chrome-brand linkish"
+            onClick={() => {
+              setView('idle')
+              setPhase('landing')
+            }}
+          >
+            <div className="mark" aria-hidden />
+            <div>
+              <p className="product">Borrower Copilot</p>
+              <p className="sub">Policy · ML · AI</p>
+            </div>
+          </button>
+          <div className="chrome-status" aria-label="System status">
+            <span className={`pill ${apiOk ? 'ok' : apiOk === false ? 'bad' : ''}`}>
+              API {apiOk === null ? '…' : apiOk ? 'online' : 'offline'}
+            </span>
+            <span className={`pill ${llmOn ? 'ok' : ''}`}>
+              OpenRouter {llmOn ? 'on' : 'fallback'}
+            </span>
+          </div>
+        </header>
+      ) : null}
+
+      <main
+        id="main"
+        className={`main ${phase === 'landing' ? 'main-landing' : ''}`}
+        aria-busy={busy}
+      >
+        <div className="sr-only" aria-live="polite" aria-atomic="true">
           {view === 'loading' || view === 'retry'
             ? 'Running policy engine and ML risk model'
             : view === 'error'
@@ -160,18 +173,21 @@ export default function App() {
           </div>
         ) : null}
 
-        {!busy && view !== 'error' && phase === 'home' ? (
-          <Home
-            onStart={() => {
+        {!busy && view !== 'error' && phase === 'landing' ? (
+          <Landing onGetStarted={() => setPhase('start')} />
+        ) : null}
+
+        {!busy && view !== 'error' && phase === 'start' ? (
+          <GetStarted
+            onBack={() => setPhase('landing')}
+            onContinue={() => {
               setAnswers({})
               setAssessment(null)
               setMl(null)
               setView('idle')
               setPhase('quiz')
             }}
-            onPersona={(key) => {
-              void runAssess({ ...PERSONAS[key] })
-            }}
+            onPersona={(key) => void runAssess({ ...PERSONAS[key] })}
           />
         ) : null}
 
@@ -179,7 +195,7 @@ export default function App() {
           <Quiz
             answers={answers}
             setAnswers={setAnswers}
-            onBack={() => setPhase('home')}
+            onBack={() => setPhase('start')}
             onDone={() => void runAssess(answers)}
           />
         ) : null}
@@ -197,7 +213,7 @@ export default function App() {
               setMl(null)
               setNarrative(null)
               setView('idle')
-              setPhase('home')
+              setPhase('landing')
             }}
             onEdit={() => {
               setView('idle')
@@ -207,64 +223,6 @@ export default function App() {
         ) : null}
       </main>
     </div>
-  )
-}
-
-function Home({
-  onStart,
-  onPersona,
-}: {
-  onStart: () => void
-  onPersona: (key: keyof typeof PERSONAS) => void
-}) {
-  return (
-    <section className="hero-panel glass-card" aria-labelledby="home-title">
-      <p className="eyebrow">Self-assessment · India · rupees</p>
-      <h1 id="home-title">Walk into the lender knowing your number.</h1>
-      <p className="lede">
-        Deterministic policy for verdict, amount, rate, and EMI. An interpretable ML risk score on
-        the side. OpenRouter writes the branch briefing — without inventing numbers.
-      </p>
-
-      <div className="feature-row">
-        <div className="feature">
-          <strong>Policy</strong>
-          <span>Auditable FOIR / rate / verdict rules</span>
-        </div>
-        <div className="feature">
-          <strong>ML</strong>
-          <span>Linear risk with feature contributions</span>
-        </div>
-        <div className="feature">
-          <strong>AI</strong>
-          <span>Grounded explain + copilot chat</span>
-        </div>
-      </div>
-
-      <div className="actions">
-        <button type="button" className="btn" onClick={onStart}>
-          Start assessment
-        </button>
-      </div>
-
-      <p className="eyebrow" style={{ marginTop: '2rem' }}>
-        Challenge personas
-      </p>
-      <div className="persona-grid" role="group" aria-label="Challenge personas">
-        {(
-          [
-            ['priya', 'Priya, 29', 'Bengaluru · salaried · wedding'],
-            ['ravi', 'Ravi, 42', 'Mysuru · kirana · LAP path'],
-            ['anita', 'Anita, 35', 'Hubballi · informal · stress'],
-          ] as const
-        ).map(([key, title, sub]) => (
-          <button key={key} type="button" className="persona" onClick={() => onPersona(key)}>
-            <strong>{title}</strong>
-            <span>{sub}</span>
-          </button>
-        ))}
-      </div>
-    </section>
   )
 }
 
@@ -647,7 +605,7 @@ function Results({
                 >
                   <i style={{ width: `${Math.min(100, f.contribution * 3)}%` }} />
                 </div>
-              </li>
+            </li>
             ))}
           </ul>
           <p className="help">ML informs the UI — it does not override policy verdict.</p>
