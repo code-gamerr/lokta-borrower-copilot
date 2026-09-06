@@ -11,11 +11,11 @@ Please find my Borrower Copilot submission:
 **Repo:** https://github.com/code-gamerr/lokta-borrower-copilot  
 *(private — I'll share access with you; say if you prefer public)*
 
-### Deliverables (at repo root)
+### Deliverables
 1. Working app — `npm install && npm run dev` (README; under 5 minutes)
-2. `RULES.md` — every threshold / assumption
-3. `RUNS.md` — Priya, Ravi, Anita (questions, O1–O4, negotiation card)
-4. `WALKTHROUGH.md` + `docs/walkthrough/` — five-minute written walkthrough and screenshot sequence
+2. `docs/RULES.md` — every threshold / assumption
+3. `docs/RUNS.md` — Priya, Ravi, Anita (questions, O1–O4, negotiation card)
+4. `docs/WALKTHROUGH.md` + `docs/walkthrough/` — five-minute written walkthrough and screenshot sequence
 
 ### Notes
 - Policy engine is source of truth; ML risk is a second signal; OpenRouter only explains grounded JSON (falls back without a key).

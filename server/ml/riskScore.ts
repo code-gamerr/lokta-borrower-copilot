@@ -19,7 +19,7 @@ export interface RiskResult {
 
 /**
  * Interpretable linear risk model (not a black box).
- * Weights are documented in RULES.md — changeable in the follow-up.
+ * Weights are documented in docs/RULES.md — changeable in the follow-up.
  * Does NOT replace the policy verdict; it is a second signal for the UI.
  */
 export function scoreRisk(answers: Answers, assessment: Assessment): RiskResult {

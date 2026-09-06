@@ -55,9 +55,26 @@ Without an OpenRouter key the app still works — AI uses a deterministic fallba
 
 ## Docs
 
-- [`RULES.md`](./RULES.md) — every threshold
-- [`RUNS.md`](./RUNS.md) — three personas
-- [`WALKTHROUGH.md`](./WALKTHROUGH.md) — 5-minute demo + next/cut
+- [`docs/RULES.md`](./docs/RULES.md) — every threshold
+- [`docs/RUNS.md`](./docs/RUNS.md) — three personas
+- [`docs/WALKTHROUGH.md`](./docs/WALKTHROUGH.md) — 5-minute demo + next/cut
+- [`docs/SUBMIT.md`](./docs/SUBMIT.md) — submission notes
+
+## Layout
+
+```
+src/
+  api/           HTTP client
+  components/    Landing, quiz, results, chat
+  engine/        Policy (FOIR, rates, verdict)
+  lib/           Shared UI labels
+  App.tsx        Phase orchestration
+server/
+  ml/            Linear risk score
+  llm/           OpenRouter + fallback
+docs/            RULES, RUNS, walkthrough, design plans
+scripts/         Persona CLI
+```
 
 ## Follow-up ready
 

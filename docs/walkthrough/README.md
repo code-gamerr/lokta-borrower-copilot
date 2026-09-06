@@ -26,7 +26,7 @@ Routed to **loan against property**. Score unknown → wide band (not treated as
 
 ## Script (what to say live)
 
-See beat sheet in the table below and the narrative in [`../../WALKTHROUGH.md`](../../WALKTHROUGH.md).
+See beat sheet in the table below and the narrative in [`../WALKTHROUGH.md`](../WALKTHROUGH.md).
 
 | # | Say |
 |---|-----|

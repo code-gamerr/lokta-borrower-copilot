@@ -6,10 +6,9 @@ Fluent-style React UI → Express API → **policy engine** (numbers) + **linear
 
 ## Demo path (≈5 minutes)
 
-See also the visual beat sheet: [`docs/walkthrough/README.md`](./docs/walkthrough/README.md).
+See also the visual beat sheet: [`walkthrough/README.md`](./walkthrough/README.md).
 
 1. Landing → **Get started** → self-assessment (or a persona).
-2. Confirm chrome pills: **API online**, OpenRouter on/fallback.
 2. Tap **Priya** → show dual amounts (lender vs safe), rate band + APR, EMI ceiling.
 3. Point at **ML risk** panel — feature contribution bars (not a black box).
 4. Scroll **AI briefing** (OpenRouter if keyed, else fallback).
