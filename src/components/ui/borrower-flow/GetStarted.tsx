@@ -1,0 +1,84 @@
+import type { ReactNode } from 'react'
+
+export function GetStarted({
+  onContinue,
+  onBack,
+  onPersona,
+  children,
+}: {
+  onContinue: () => void
+  onBack: () => void
+  onPersona: (key: 'priya' | 'ravi' | 'anita') => void
+  children?: ReactNode
+}) {
+  return (
+    <div className="started">
+      <header className="started-top">
+        <button type="button" className="btn ghost" onClick={onBack}>
+          Back
+        </button>
+        <p className="landing-wordmark compact">
+          Borrower <em>Copilot</em>
+        </p>
+      </header>
+
+      <section className="started-panel glass-card" aria-labelledby="started-title">
+        <p className="eyebrow">Get started</p>
+        <h1 id="started-title">What you walk away with</h1>
+        <p className="lede">
+          Answer a short, adaptive set of questions. The policy engine sizes the loan; ML scores
+          stress; AI explains — without inventing numbers.
+        </p>
+
+        <ol className="started-steps">
+          <li>
+            <strong>Should you borrow?</strong>
+            <span>Borrow, borrow less, or don’t — with a one-line why.</span>
+          </li>
+          <li>
+            <strong>How much?</strong>
+            <span>Lender-likely sanction vs what you can safely carry.</span>
+          </li>
+          <li>
+            <strong>Fair rate + APR</strong>
+            <span>A band, including processing fee — so quotes compare honestly.</span>
+          </li>
+          <li>
+            <strong>EMI ceiling + card</strong>
+            <span>Monthly max, stress case, and a printable negotiation sheet.</span>
+          </li>
+        </ol>
+
+        <div className="started-privacy" role="note">
+          <strong>Privacy.</strong> Runs on what you type. No account. No bureau pull. No data kept
+          after you close the tab.
+        </div>
+
+        <div className="actions">
+          <button type="button" className="btn btn-lg" onClick={onContinue}>
+            Start self-assessment
+          </button>
+        </div>
+
+        <p className="eyebrow" style={{ marginTop: '1.75rem' }}>
+          Or open a challenge persona
+        </p>
+        <div className="persona-grid" role="group" aria-label="Challenge personas">
+          {(
+            [
+              ['priya', 'Priya, 29', 'Bengaluru · salaried'],
+              ['ravi', 'Ravi, 42', 'Mysuru · kirana'],
+              ['anita', 'Anita, 35', 'Hubballi · informal'],
+            ] as const
+          ).map(([key, title, sub]) => (
+            <button key={key} type="button" className="persona" onClick={() => onPersona(key)}>
+              <strong>{title}</strong>
+              <span>{sub}</span>
+            </button>
+          ))}
+        </div>
+        {children}
+      </section>
+    </div>
+  )
+}
